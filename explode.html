@@ -9,10 +9,17 @@ body{
 .node {
   fill: #037fbc;
 }
-
-.node:hover{
-  fill: red;
+/*
+.node:before {
+  content: "";
+  background: #000;
+  height: 10px;
+  width: 10px;
 }
+*/
+/*.node:hover{
+  fill: red;
+}*/
 
 .cursor {
   fill: none;
@@ -77,7 +84,6 @@ function mousedown() {
       links.push({source: node, target: target});
     }
   });
-
   restart();
 }
 
@@ -117,12 +123,32 @@ function restart() {
     $(this).addClass('ripple');
   })*/
 
-  d3.selectAll('.node').on('mouseenter', function(d, i){
-    d3.select(this).transition().attr('r', 100).style('opacity', 0);
-  })
-  d3.selectAll('.node').on('mouseleave', function(d, i){
-    d3.select(this).attr('r', 7).transition().style('opacity', 1);
-  })
+
+
 }
+
+function clone(selector) {
+  var node = d3.select(selector).node();
+  return d3.select(node.parentNode.insertBefore(node.cloneNode(true),
+node.nextSibling));
+}
+
+function ripple(clone){
+  clone.transition().attr('r',100).style('opacity', 0).remove();
+}
+
+setInterval(function(){
+  var dice = Math.floor(Math.random()*2);
+  //probability 50% that there will be a ripple
+  if(dice === 1){
+    var nodes = d3.selectAll('.node');
+    var count = nodes[0].length;
+    var randIndex = Math.floor(Math.random()*count);
+    var c = clone(nodes[0][randIndex]);
+    ripple(c);
+  }else{
+    return;
+  }
+}, 1000);
 
 </script>
